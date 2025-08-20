@@ -93,34 +93,28 @@
 </head>
 <body>
 
-<h1>Encurtador de URL</h1>
+<h1>Cadastre um novo usuário</h1>
 <form method="post">
     {% csrf_token %}
     {% if error %}
         <p style="color:red;">{{ error }}</p>
     {% endif %}
-    <input type="url" name="original_url" placeholder="Cole a URL aqui" required>
-    <input type="text" name="custom_url" placeholder="Insira uma URL customizada (opcional)">
+    <input type="text" name="new_username" placeholder="Nome do usuário" required>
+    <input type="text" name="new_email" placeholder="Email">
     <button type="submit">Encurtar</button>
     
     <table>
         <thead>
             <tr>
-                <th>Short URL</th>
-                <th>original_url</th>
-                <th>clicks</th>
-                <th>user</th>
+                <th>Username</th>
                 <th>email</th>
             </tr>
         </thead>
         <tbody>
-            {% for url in urls %}
+            {% for user in users %}
             <tr>
-                <td><a href="/{{ url.short_code }}"  target="_blank">{{ request.get_host }}/{{ url.short_code }}</a></td>
-                <td>{{ url.original_url }}</td>
-                <td>{{ url.clicks }}</td>
-                <td>{{ url.username }}</td>
-                <td>{{ url.email }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -129,3 +123,6 @@
 
 </body>
 </html>
+
+
+

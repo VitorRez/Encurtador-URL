@@ -26,21 +26,25 @@ def get_users():
     conn = connect_to_db()
     cur = conn.cursor()
 
-    cur.execute(f"SELECT USERNAME, EMAIL, PASSWORD_HASH FROM USUARIO;")
+    cur.execute(f"SELECT ID, USERNAME, EMAIL, PASSWORD_HASH FROM USUARIO;")
     return cur.fetchall()
 
 def get_user(username):
     conn = connect_to_db()
     cur = conn.cursor()
 
-    cur.execute(f"SELECT USERNAME, EMAIL, PASSWORD_HASH FROM USUARIO WHERE USERNAME = '{username}';")
+    cur.execute(f"SELECT ID, USERNAME, EMAIL, PASSWORD_HASH FROM USUARIO WHERE USERNAME = '{username}';")
     return cur.fetchone()
 
 def verify_password(username, password):
     user = get_user(username)
 
+    if user == None:
+        print(1)
+        return None
+
     if verify_hash(password, user['password_hash']):
         return user
     
-    else:
-        return None
+    print(2)
+    return None

@@ -21,7 +21,9 @@ from core.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', encurtar_view, name='encurtar'),
+    path('', homepage_view, name='homepage'),
+    path('encurtar', encurtar_view, name='encurtar'),
+    path('usuarios', usuarios_view, name='usuarios'),
     path('login/', login_view, name='login'),
     path('<str:code>/', redirecionar_view, name='redirecionar'),
 ]
