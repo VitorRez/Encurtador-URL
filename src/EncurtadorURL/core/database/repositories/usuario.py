@@ -40,11 +40,11 @@ def verify_password(username, password):
     user = get_user(username)
 
     if user == None:
-        print(1)
         return None
+    
+    print(password)
 
     if verify_hash(password, user['password_hash']):
         return user
     
-    print(2)
     return None

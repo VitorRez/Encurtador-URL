@@ -4,9 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <title>homepage</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}?v=2">
 </head>
 <body>
-    <button onclick="window.location='/encurtar';">encurtador de URL</button>
-    <button onclick="window.location='/usuarios';">Usuarios</button>
+    <header>
+        <div>
+            <h2>Encurtador de URL</h2>
+        </div>
+        <div>
+            {% if is_authenticated %}
+                <button onclick="window.location='/logout';">Logoff</button>
+                <button onclick="filtrarMinhasURLs()">Minhas URLs</button>
+                <button onclick="window.location='/outra-pagina';">Outra página</button>
+            {% else %}
+                <button onclick="abrirLogin()">Login</button>
+            {% endif %}
+        </div>
+    </header>
+
+    <div id="loginDashboard" class="dashboard">
+        <div class="dashboard-content">
+            <span class="close" onclick="fecharLogin()">&times;</span>
+            <h3>Login</h3>
+            <form method="post">
+                {% csrf_token %}
+                <label>Usuário</label>
+                <input type="text" name="username" required>
+                <label>Senha</label>
+                <input type="password" name="password" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+
+    <main style="padding:20px;">
+
+        {% if is_authenticated %}
+        <h3>Nova URL</h3>
+        <form method="post">
+            <input type="url" name="original_url" placeholder="Cole a URL aqui" required>
+            <input type="text" name="custom_url" placeholder="Insira uma URL customizada (opcional)">
+            <button type="submit">Encurtar</button>
+        </form>
+        {% endif %}
+
+        {% if response.error %}
+            <p class="error">{{ response.error }}</p>
+        {% endif %}
+
+        <h3>URLs cadastradas</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Short URL</th>
+                    <th>original_url</th>
+                    <th>clicks</th>
+                    <th>user</th>
+                    <th>email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for url in urls %}
+                <tr>
+                    <td><a href="/{{ url.short_code }}"  target="_blank">{{ request.get_host }}/{{ url.short_code }}</a></td>
+                    <td>{{ url.original_url }}</td>
+                    <td>{{ url.clicks }}</td>
+                    <td>{{ url.username }}</td>
+                    <td>{{ url.email }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        function abrirLogin() {
+            document.getElementById("loginDashboard").style.right = "0";
+        }
+        function fecharLogin() {
+            document.getElementById("loginDashboard").style.right = "-400px";
+        }
+        function filtrarMinhasURLs() {
+            const user = "{{ request.user.username }}";
+            document.querySelectorAll(".url-row").forEach(row => {
+                row.style.display = (row.dataset.user === user) ? "" : "none";
+            });
+        }
+    </script>
+
 </body>

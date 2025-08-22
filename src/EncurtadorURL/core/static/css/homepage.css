@@ -1,0 +1,296 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilo do body */
+body {
+    background: #f9fafb;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ===== Header ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    background: #2563eb; /* azul */
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+header button {
+    background: white;
+    color: #2563eb;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+header button:hover {
+    background: #e0e7ff;
+}
+
+/* ===== Main ===== */
+main {
+    padding: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+main h3 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: #111827;
+}
+
+/* ===== Tabela ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+thead {
+    background: #c7c7c7;
+    text-align: left;
+}
+
+thead th {
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+tbody td {
+    padding: 12px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Links da tabela */
+table a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+table a:hover {
+    text-decoration: underline;
+}
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Estilo do body */
+body {
+    background: #f9fafb;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ===== Header ===== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    background: #2563eb; /* azul */
+    color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+header button {
+    background: white;
+    color: #2563eb;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+header button:hover {
+    background: #e0e7ff;
+}
+
+/* ===== Main ===== */
+main {
+    padding: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+main h3 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: #111827;
+}
+
+/* ===== Tabela ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+thead {
+    background: #f3f4f6;
+    text-align: left;
+}
+
+thead th {
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+tbody td {
+    padding: 12px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Links da tabela */
+table a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+table a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Dashboard lateral ===== */
+.dashboard {
+    position: fixed;
+    top: 0;
+    right: -400px; /* escondido inicialmente */
+    width: 400px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    transition: right 0.3s ease;
+    z-index: 2000;
+    padding: 20px;
+    font-family: sans-serif;
+}
+
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 40px;
+}
+
+.dashboard-content h3 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.dashboard-content label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.dashboard-content input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.dashboard-content input:focus {
+    border-color: #2563eb;
+}
+
+.dashboard-content button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.2s;
+    width: 100%;
+}
+.dashboard-content button:hover {
+    background: #1d4ed8;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.error {
+    background-color: #ffe5e5;
+    color: #d63031;
+    border: 1px solid #ff7675;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 15px;
+}

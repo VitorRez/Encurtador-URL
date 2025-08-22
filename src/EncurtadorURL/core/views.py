@@ -42,16 +42,13 @@ def generate_code(length=6):
 
 
 def login_view(request):
-    if request.method != 'POST':
-        return render(request, 'core/login.html')
-    
     username = request.POST.get('username')
     password = request.POST.get('password')
 
     user = verify_password(username, password)
 
     if user == None:
-        return render(request, 'core/login.html', {'error': 'Usuário ou senha inválidos'})
+        return {'error': 'Usuário ou senhas inválidos.'}
 
     refresh = create_refresh(username)
 
@@ -60,16 +57,45 @@ def login_view(request):
     request.session['user'] = username
     request.session['email'] = user['email']
 
-    return redirect('homepage')
+    return {'message': 'Login realizado com sucesso.'}
 
 def homepage_view(request):
     token = verify_token(request)
 
-    if not token:
-        return redirect('login')
-
     urls = get_short_urls()
-    return render(request, 'core/home.html', {'urls': urls})
+
+    if request.method != 'POST':
+        return render(request, 'core/home.html', {
+            'urls': urls,
+            'is_authenticated': bool(token)
+        })
+    
+    if request.POST['username']:
+        response = login_view(request)
+
+        token = verify_token(request)
+        return render(request, 'core/home.html', {
+            'urls': urls,
+            'is_authenticated': bool(token),
+            'response': response
+        })
+
+        if not response['success']:
+            return render(request, 'core/home.html', {
+                'urls': urls,
+                'is_authenticated': bool(token),
+                'error': response['error'],
+            })
+        
+        else:
+            token = verify_token(request)
+            return render(request, 'core/home.html', {
+                'urls': urls,
+                'is_authenticated': bool(token)
+            })
+        
+        
+    
 
 def encurtar_view(request):
     token = verify_token(request)
@@ -105,10 +131,7 @@ def usuarios_view(request):
         new_email = request.POST['new_email']
         new_password = generate_code(8)
 
-        password_hash = create_hash(new_password)
-        print(new_password)
-
-        response = create_user(new_username, new_email, password_hash)
+        response = create_user(new_username, new_email, new_password)
 
         assunto = "Sua conta foi criada"
         mensagem = f"Olá {new_username},\n\nSua conta foi criada com sucesso.\nSua senha é: {new_password}\n\nPor segurança, altere-a após o login."
