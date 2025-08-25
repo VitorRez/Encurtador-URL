@@ -1,128 +1,55 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encurtador de URL</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-            color: #2f3640;
-        }
-
-        form {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        input, button {
-            display: block;
-            width: 100%;
-            margin-bottom: 15px;
-            padding: 10px;
-            font-size: 14px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        input:focus {
-            border-color: #00a8ff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0,168,255,0.4);
-        }
-
-        button {
-            background-color: #00a8ff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        button:hover {
-            background-color: #0097e6;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        thead {
-            background-color: #00a8ff;
-            color: white;
-        }
-
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tbody tr:hover {
-            background-color: #f1f2f6;
-        }
-
-        p {
-            text-align: center;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            word-break: break-all; /* força quebra em qualquer ponto */
-            max-width: 400px; /* largura máxima para não estourar */
-        }
-    </style>
+    <title>usuarios</title>
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}?v=2">
 </head>
 <body>
+    <header>
+        <div>
+            <h2>Encurtador de URL</h2>
+        </div>
+        <div>
+            <button onclick="window.location='/';">Home</button>
+            <button onclick="window.location='/logout';">Logoff</button>
+        </div>
+    </header>
 
-<h1>Cadastre um novo usuário</h1>
-<form method="post">
-    {% csrf_token %}
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
-    <input type="text" name="new_username" placeholder="Nome do usuário" required>
-    <input type="text" name="new_email" placeholder="Email">
-    <button type="submit">Encurtar</button>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>email</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</form>
+    <main class="content">
+        <div class="form-container">
+            <form method="post" class="url-form">
+                {% csrf_token %}
+                <h3>Novo usuario</h3>
+                <div class="input-group">
+                    <input type="text" name="new_username" placeholder="Nome do usuário" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="new_email" placeholder="Email">
+                </div>
+                <button type="submit">Criar</button>
+            </form>
+        </div>
 
+        <div class="table-container">
+            <h3>Usuarios</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
-</html>
-
-
-

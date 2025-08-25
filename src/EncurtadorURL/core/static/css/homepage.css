@@ -32,6 +32,10 @@ header h2 {
     font-weight: bold;
 }
 
+header div button {
+    margin-left: 10px;
+}
+
 header button {
     background: white;
     color: #2563eb;
@@ -50,8 +54,9 @@ header button:hover {
 /* ===== Main ===== */
 main {
     padding: 30px;
-    max-width: 1000px;
+    max-width: 1400px;   /* mais largura */
     margin: 0 auto;
+    width: 100%;
 }
 
 main h3 {
@@ -60,115 +65,35 @@ main h3 {
     color: #111827;
 }
 
-/* ===== Tabela ===== */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-thead {
-    background: #c7c7c7;
-    text-align: left;
-}
-
-thead th {
-    padding: 12px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #374151;
-}
-
-tbody td {
-    padding: 12px;
-    border-top: 1px solid #e5e7eb;
-    font-size: 0.9rem;
-    color: #4b5563;
-}
-
-tbody tr:hover {
-    background: #f9fafb;
-}
-
-/* Links da tabela */
-table a {
-    color: #2563eb;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-table a:hover {
-    text-decoration: underline;
-}
-
-/* Reset básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Estilo do body */
-body {
-    background: #f9fafb;
-    color: #333;
-    line-height: 1.6;
-}
-
-/* ===== Header ===== */
-header {
+/* ===== Layout principal ===== */
+.content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 30px;
-    background: #2563eb; /* azul */
-    color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+    justify-content: stretch;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 20px;
 }
 
-header h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
+/* Formulário ocupa menos */
+.form-container {
+    flex: 1;
+    min-width: 320px;
+    max-width: 450px;
 }
 
-header button {
-    background: white;
-    color: #2563eb;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
+/* Tabela ocupa o resto */
+.table-container {
+    flex: 1;
+    min-width: 320px;
+    max-width: 450px;
 }
 
-header button:hover {
-    background: #e0e7ff;
-}
-
-/* ===== Main ===== */
-main {
-    padding: 30px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-main h3 {
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    color: #111827;
+.table-container table {
+    width: 100%;
 }
 
 /* ===== Tabela ===== */
 table {
-    width: 100%;
     border-collapse: collapse;
     background: white;
     border-radius: 8px;
@@ -199,7 +124,6 @@ tbody tr:hover {
     background: #f9fafb;
 }
 
-/* Links da tabela */
 table a {
     color: #2563eb;
     text-decoration: none;
@@ -222,7 +146,6 @@ table a:hover {
     transition: right 0.3s ease;
     z-index: 2000;
     padding: 20px;
-    font-family: sans-serif;
 }
 
 .dashboard-content {
@@ -272,6 +195,7 @@ table a:hover {
     transition: background 0.2s;
     width: 100%;
 }
+
 .dashboard-content button:hover {
     background: #1d4ed8;
 }
@@ -293,4 +217,68 @@ table a:hover {
     font-size: 13px;
     text-align: center;
     margin-bottom: 15px;
+}
+
+/* ===== Formulário Nova URL ===== */
+.url-form {
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.url-form .input-group {
+    margin-bottom: 15px;
+}
+
+.url-form input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.url-form input:focus {
+    border-color: #00a8ff;
+    outline: none;
+    box-shadow: 0 0 6px rgba(0,168,255,0.3);
+}
+
+.url-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background: linear-gradient(135deg, #009dff, #007acc);
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.url-form button:hover {
+    background: linear-gradient(135deg, #007acc, #005fa3);
+}
+
+.url-form h3 {
+    text-align: center;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 900px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .form-container, .table-container {
+        max-width: 100%;
+    }
+
+    .dashboard {
+        width: 100%;
+    }
 }

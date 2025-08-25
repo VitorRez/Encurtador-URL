@@ -13,9 +13,9 @@
         </div>
         <div>
             {% if is_authenticated %}
-                <button onclick="window.location='/logout';">Logoff</button>
                 <button onclick="filtrarMinhasURLs()">Minhas URLs</button>
-                <button onclick="window.location='/outra-pagina';">Outra página</button>
+                <button onclick="window.location='/usuarios';">Gerenciar usuários</button>
+                <button onclick="window.location='/logout';">Logoff</button>
             {% else %}
                 <button onclick="abrirLogin()">Login</button>
             {% endif %}
@@ -38,59 +38,80 @@
     </div>
 
 
-    <main style="padding:20px;">
-
+    <main class="content">
         {% if is_authenticated %}
-        <h3>Nova URL</h3>
-        <form method="post">
-            <input type="url" name="original_url" placeholder="Cole a URL aqui" required>
-            <input type="text" name="custom_url" placeholder="Insira uma URL customizada (opcional)">
-            <button type="submit">Encurtar</button>
-        </form>
+        <div class="form-container">
+            <form method="post" class="url-form">
+                {% csrf_token %}
+                <h3>Nova URL</h3>
+                <div class="input-group">
+                    <input type="url" name="original_url" placeholder="Cole a URL aqui" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="custom_url" placeholder="Insira uma URL customizada (opcional)">
+                </div>
+                <button type="submit">Encurtar</button>
+            </form>
+        </div>
         {% endif %}
 
-        {% if response.error %}
-            <p class="error">{{ response.error }}</p>
-        {% endif %}
-
-        <h3>URLs cadastradas</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Short URL</th>
-                    <th>original_url</th>
-                    <th>clicks</th>
-                    <th>user</th>
-                    <th>email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for url in urls %}
-                <tr>
-                    <td><a href="/{{ url.short_code }}"  target="_blank">{{ request.get_host }}/{{ url.short_code }}</a></td>
-                    <td>{{ url.original_url }}</td>
-                    <td>{{ url.clicks }}</td>
-                    <td>{{ url.username }}</td>
-                    <td>{{ url.email }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-container">
+            <h3>URLs cadastradas</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>URL Encurtada</th>
+                        <th>URL Original</th>
+                        <th>N° de clicks</th>
+                        <th>Criado por</th>
+                        <th>email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for url in urls %}
+                    <tr class="url-row" data-user="{{ url.username }}">
+                        <td><a href="/{{ url.short_code }}" target="_blank">{{ request.get_host }}/{{ url.short_code }}</a></td>
+                        <td>{{ url.original_url }}</td>
+                        <td>{{ url.clicks }}</td>
+                        <td>{{ url.username }}</td>
+                        <td>{{ url.email }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </main>
 
+
     <script>
+        var filtroAtivo = false;
+
         function abrirLogin() {
             document.getElementById("loginDashboard").style.right = "0";
         }
+
         function fecharLogin() {
             document.getElementById("loginDashboard").style.right = "-400px";
         }
+
         function filtrarMinhasURLs() {
-            const user = "{{ request.user.username }}";
-            document.querySelectorAll(".url-row").forEach(row => {
-                row.style.display = (row.dataset.user === user) ? "" : "none";
-            });
+            const user = "{{ username }}";
+            const rows = document.querySelectorAll(".url-row");
+            const botao = document.querySelector('button[onclick="filtrarMinhasURLs()"]');
+
+            if (!filtroAtivo) {
+                rows.forEach(row => {
+                    row.style.display = (row.dataset.user === user) ? "" : "none";
+                });
+                botao.textContent = "Mostrar todas";
+                filtroAtivo = true;
+            } else {
+                rows.forEach(row => row.style.display = "");
+                botao.textContent = "Minhas URLs";
+                filtroAtivo = false;
+            }
         }
     </script>
+
 
 </body>

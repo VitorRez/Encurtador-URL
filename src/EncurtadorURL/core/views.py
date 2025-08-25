@@ -15,7 +15,9 @@ from .models import ShortURL
 from .database.repositories.usuario import *
 from .database.repositories.short_url import *
 
+
 # Create your views here.
+
 
 def create_refresh(username):
     refresh = RefreshToken()
@@ -24,6 +26,7 @@ def create_refresh(username):
     refresh["is_external"] = True
 
     return refresh
+
 
 def verify_token(request):
     token_str = request.session.get('access')
@@ -35,6 +38,7 @@ def verify_token(request):
         return token
     except TokenError:
         return None
+    
 
 def generate_code(length=6):
 
@@ -48,7 +52,7 @@ def login_view(request):
     user = verify_password(username, password)
 
     if user == None:
-        return {'error': 'Usuário ou senhas inválidos.'}
+        return {'error': 'Usuário ou senha inválidos.'}
 
     refresh = create_refresh(username)
 
@@ -59,7 +63,18 @@ def login_view(request):
 
     return {'message': 'Login realizado com sucesso.'}
 
+
+def encurtar_view(request):
+    original_url = request.POST.get('original_url')
+    custom_url = request.POST.get('custom_url')
+    username = request.session.get('user')
+
+    response = create_short_url(original_url, username, custom_url)
+    return response
+
+
 def homepage_view(request):
+    user = request.session.get('user')
     token = verify_token(request)
 
     urls = get_short_urls()
@@ -67,58 +82,31 @@ def homepage_view(request):
     if request.method != 'POST':
         return render(request, 'core/home.html', {
             'urls': urls,
-            'is_authenticated': bool(token)
+            'is_authenticated': bool(token),
+            'username': user
         })
     
-    if request.POST['username']:
+    if request.POST.get('username'):
         response = login_view(request)
 
         token = verify_token(request)
         return render(request, 'core/home.html', {
             'urls': urls,
             'is_authenticated': bool(token),
-            'response': response
+            'response': response,
+            'username': user
         })
 
-        if not response['success']:
-            return render(request, 'core/home.html', {
-                'urls': urls,
-                'is_authenticated': bool(token),
-                'error': response['error'],
-            })
-        
-        else:
-            token = verify_token(request)
-            return render(request, 'core/home.html', {
-                'urls': urls,
-                'is_authenticated': bool(token)
-            })
-        
-        
-    
+    elif request.POST.get('original_url'):
+        response = encurtar_view(request)
 
-def encurtar_view(request):
-    token = verify_token(request)
+        urls = get_short_urls()
+        return render(request, 'core/home.html', {
+            'urls': urls,
+            'is_authenticated': bool(token),
+            'username': user
+        })
 
-    if not token:
-        return redirect('login')
-    
-    username = request.session.get('user')
-
-    if request.method == 'POST':
-        
-        original_url = request.POST['original_url']
-        custom_url = request.POST['custom_url']
-
-        if custom_url:
-            response = create_short_url_with_code(original_url, custom_url, username)
-        
-        else:
-            response = create_short_url(original_url, username)
-
-    urls = get_short_urls()
-    
-    return render(request, 'core/form.html', {'urls': urls})
 
 def usuarios_view(request):
     token = verify_token(request)
@@ -159,3 +147,7 @@ def redirecionar_view(request, code):
     
     except ShortURL.DoesNotExist:
         return render(request, 'core/404.html', status=404)
+    
+def logout_view(request):
+    request.session.flush()  # limpa toda a sessão
+    return redirect("/")     # redireciona para a homepage

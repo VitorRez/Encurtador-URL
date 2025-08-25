@@ -20,10 +20,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from core.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', homepage_view, name='homepage'),
-    path('encurtar', encurtar_view, name='encurtar'),
+    path("logout/", logout_view, name="logout"),
     path('usuarios', usuarios_view, name='usuarios'),
-    path('login/', login_view, name='login'),
     path('<str:code>/', redirecionar_view, name='redirecionar'),
 ]

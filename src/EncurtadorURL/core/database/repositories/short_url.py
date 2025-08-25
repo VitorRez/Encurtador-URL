@@ -2,48 +2,33 @@ from .usuario import get_user
 from ..connection import connect_to_db
 from ..utils.create_code import generate_code
 
-def create_short_url(original_url, username):
+def create_short_url(original_url, username, custom_url):
     conn = connect_to_db()
     cur = conn.cursor()
 
     try:
         user = get_user(username)
 
-        short_code = generate_code()
-        cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{short_code}', '{original_url}', '{user['id']}');")
+        if not custom_url:
+            short_code = generate_code()
+            cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{short_code}', '{original_url}', '{user['id']}');")            
+
+        else:
+            cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{custom_url}', '{original_url}', '{user['id']}');")
+
         conn.commit()
 
         cur.close()
         conn.close()
 
-        return {"success": True, "message": "url encurtado com sucesso!"}
+        return {"message": "url encurtado com sucesso!"}
     
     except Exception as e:
         cur.close()
         conn.close()
 
-        return {"success": False, "error": str(e)}
+        return {"error": str(e)}
     
-def create_short_url_with_code(original_url, short_code, username):
-    conn = connect_to_db()
-    cur = conn.cursor()
-
-    try:
-        user = get_user(username)
-
-        cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{short_code}', '{original_url}', '{user['id']}');")
-        conn.commit()
-
-        cur.close()
-        conn.close()
-
-        return {"success": True, "message": "url encurtado com sucesso!"}
-    
-    except Exception as e:
-        cur.close()
-        conn.close()
-
-        return {"success": False, "error": str(e)}
     
 def get_short_urls():
     conn = connect_to_db()
