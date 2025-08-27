@@ -1,15 +1,14 @@
-/* Reset básico */
+/* ===== Reset básico ===== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Estilo do body */
 body {
-    background: #f9fafb;
-    color: #333;
+    background: #f8fafc;
+    color: #1f2937;
     line-height: 1.6;
 }
 
@@ -18,87 +17,137 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 30px;
-    background: #2563eb; /* azul */
+    padding: 14px 32px;
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
     color: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     position: sticky;
     top: 0;
     z-index: 1000;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 header h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
-}
-
-header div button {
-    margin-left: 10px;
+    letter-spacing: -0.5px;
 }
 
 header button {
     background: white;
     color: #2563eb;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.25s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 header button:hover {
     background: #e0e7ff;
+    transform: translateY(-2px);
 }
 
-/* ===== Main ===== */
+header .logout {
+    background: #ef4444;
+    color: white;
+}
+
+header .logout:hover {
+    background: #dc2626;
+}
+
+/* ===== Layout principal ===== */
 main {
-    padding: 30px;
-    max-width: 1400px;   /* mais largura */
+    padding: 40px 20px;
+    max-width: 1400px;
     margin: 0 auto;
     width: 100%;
 }
 
-main h3 {
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    color: #111827;
-}
-
-/* ===== Layout principal ===== */
 .content {
     display: flex;
     justify-content: stretch;
     align-items: flex-start;
     gap: 40px;
-    padding: 20px;
+    flex-wrap: wrap;
 }
 
-/* Formulário ocupa menos */
-.form-container {
-    flex: 1;
-    min-width: 320px;
-    max-width: 450px;
+main h3 {
+    margin-bottom: 18px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111827;
 }
 
-/* Tabela ocupa o resto */
+/* ===== Formulário Nova URL ===== */
+.url-form {
+    background: #fff;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.url-form h3 {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.url-form .input-group {
+    margin-bottom: 16px;
+}
+
+.url-form input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 15px;
+    transition: 0.25s;
+}
+
+.url-form input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 6px rgba(37,99,235,0.3);
+}
+
+.url-form button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.url-form button:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    transform: translateY(-1px);
+}
+
+/* ===== Tabela ===== */
 .table-container {
-    flex: 1;
-    min-width: 320px;
-    max-width: 450px;
+    flex: 2;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .table-container table {
     width: 100%;
-}
-
-/* ===== Tabela ===== */
-table {
     border-collapse: collapse;
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
 thead {
@@ -107,14 +156,14 @@ thead {
 }
 
 thead th {
-    padding: 12px;
+    padding: 14px;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 700;
     color: #374151;
 }
 
 tbody td {
-    padding: 12px;
+    padding: 14px;
     border-top: 1px solid #e5e7eb;
     font-size: 0.9rem;
     color: #4b5563;
@@ -138,134 +187,114 @@ table a:hover {
 .dashboard {
     position: fixed;
     top: 0;
-    right: -400px; /* escondido inicialmente */
-    width: 400px;
+    right: -420px;
+    width: 420px;
     height: 100%;
     background: #fff;
-    box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    box-shadow: -2px 0 12px rgba(0,0,0,0.2);
     transition: right 0.3s ease;
     z-index: 2000;
-    padding: 20px;
+    padding: 24px;
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
 }
 
 .dashboard-content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 40px;
-}
-
-.dashboard-content h3 {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #111;
-}
-
-.dashboard-content label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    display: block;
+    gap: 14px;
+    margin-top: 50px;
 }
 
 .dashboard-content input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    transition: 0.25s;
 }
 
 .dashboard-content input:focus {
     border-color: #2563eb;
+    box-shadow: 0 0 5px rgba(37,99,235,0.3);
 }
 
 .dashboard-content button {
+    padding: 12px;
+    border-radius: 10px;
     background: #2563eb;
     color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
     font-weight: 600;
-    transition: background 0.2s;
-    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: 0.25s;
 }
 
 .dashboard-content button:hover {
     background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.dashboard-content .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.dashboard-content label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.dashboard-content input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
 }
 
 .close {
     position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 1.5rem;
+    top: 16px;
+    right: 24px;
+    font-size: 1.8rem;
     cursor: pointer;
+}
+
+/* ===== Alerts ===== */
+.alerts {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.error, .message {
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 12px;
+    animation: fadeIn 0.3s ease-in;
 }
 
 .error {
-    background-color: #ffe5e5;
-    color: #d63031;
-    border: 1px solid #ff7675;
-    padding: 8px;
-    border-radius: 5px;
-    font-size: 13px;
-    text-align: center;
-    margin-bottom: 15px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
 }
 
-/* ===== Formulário Nova URL ===== */
-.url-form {
-    background: #fff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    animation: fadeIn 0.4s ease-in-out;
+.message {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
 }
 
-.url-form .input-group {
-    margin-bottom: 15px;
-}
-
-.url-form input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 15px;
-    transition: 0.2s;
-}
-
-.url-form input:focus {
-    border-color: #00a8ff;
-    outline: none;
-    box-shadow: 0 0 6px rgba(0,168,255,0.3);
-}
-
-.url-form button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    background: linear-gradient(135deg, #009dff, #007acc);
-    color: #fff;
-    font-size: 15px;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.url-form button:hover {
-    background: linear-gradient(135deg, #007acc, #005fa3);
-}
-
-.url-form h3 {
-    text-align: center;
+/* ===== Animações ===== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Responsividade ===== */
@@ -274,11 +303,8 @@ table a:hover {
         flex-direction: column;
     }
 
-    .form-container, .table-container {
-        max-width: 100%;
-    }
-
     .dashboard {
         width: 100%;
+        border-radius: 0;
     }
 }

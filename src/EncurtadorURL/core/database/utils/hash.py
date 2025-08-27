@@ -19,8 +19,6 @@ def verify_hash(text, t_hash):
     if isinstance(text, str):
         text = text.encode('utf-8')
     t_hash1 = SHA256.new(text+salt)
-    print(t_hash)
-    print(t_hash1.digest())
     return t_hash == t_hash1.digest()
 
 def get_salt(t_hash):

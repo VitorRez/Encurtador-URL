@@ -19,10 +19,10 @@ from .database.repositories.short_url import *
 # Create your views here.
 
 
-def create_refresh(username):
+def create_refresh(id):
     refresh = RefreshToken()
 
-    refresh["username"] = username
+    refresh["user_id"] = id
     refresh["is_external"] = True
 
     return refresh
@@ -46,73 +46,87 @@ def generate_code(length=6):
 
 
 def login_view(request):
-    username = request.POST.get('username')
+    email = request.POST.get('email')
     password = request.POST.get('password')
 
-    user = verify_password(username, password)
+    user = verify_password(email, password)
 
     if user == None:
-        return {'error': 'Usuário ou senha inválidos.'}
+        return {'error': 'Email ou senha inválidos.'}
 
-    refresh = create_refresh(username)
+    refresh = create_refresh(user['id'])
 
     request.session['refresh'] = str(refresh)
     request.session['access'] = str(refresh.access_token)
-    request.session['user'] = username
-    request.session['email'] = user['email']
+    request.session['user_id'] = user['id']
 
     return {'message': 'Login realizado com sucesso.'}
 
 
 def encurtar_view(request):
+    user_id = request.session.get('user_id')
+
     original_url = request.POST.get('original_url')
     custom_url = request.POST.get('custom_url')
-    username = request.session.get('user')
 
-    response = create_short_url(original_url, username, custom_url)
+    response = create_short_url(original_url, user_id, custom_url)
     return response
 
 
 def homepage_view(request):
-    user = request.session.get('user')
+    user_id = request.session.get('user_id')
     token = verify_token(request)
+    username = ''
+
+    if user_id:
+        user = get_user_by_id(user_id)
+        print(user)
+        if user:
+            username = user.get('username', '')
 
     urls = get_short_urls()
+    print(urls)
+    context = {
+        'urls': urls,
+        'is_authenticated': bool(token),
+        'username': username
+    }
 
-    if request.method != 'POST':
-        return render(request, 'core/home.html', {
-            'urls': urls,
-            'is_authenticated': bool(token),
-            'username': user
-        })
-    
-    if request.POST.get('username'):
-        response = login_view(request)
+    if request.method == 'POST':
+        if request.POST.get('email'):
+            response = login_view(request)
+            token = verify_token(request)
+            context.update({
+                'response': response,
+                'is_authenticated': bool(token)
+            })
 
-        token = verify_token(request)
-        return render(request, 'core/home.html', {
-            'urls': urls,
-            'is_authenticated': bool(token),
-            'response': response,
-            'username': user
-        })
+        elif request.POST.get('original_url'):
+            response = encurtar_view(request)
+            urls = get_short_urls()
+            context.update({
+                'urls': urls,
+                'response': response
+            })
 
-    elif request.POST.get('original_url'):
-        response = encurtar_view(request)
+        elif request.POST.get('new_username'):
+            response = perfil_view(request)
+            urls = get_short_urls()
+            context.update({
+                'urls': urls,
+                'response': response
+            })
 
-        urls = get_short_urls()
-        return render(request, 'core/home.html', {
-            'urls': urls,
-            'is_authenticated': bool(token),
-            'username': user
-        })
+    return render(request, 'core/home.html', context)
 
 
 def usuarios_view(request):
     token = verify_token(request)
 
     if not token:
-        return redirect('login')
+        return redirect('homepage')
+    
+    response = {}
 
     if request.method == 'POST':
         new_username = request.POST['new_username']
@@ -135,7 +149,33 @@ def usuarios_view(request):
 
     users = get_users()
 
-    return render(request, 'core/usuarios.html', {'users': users})
+    return render(request, 'core/usuarios.html', {'users': users, 'response': response})
+
+def perfil_view(request):
+    user_id = request.session.get('user_id')
+    user = get_user_by_id(user_id)
+    
+    new_username = request.POST['new_username']
+    new_email = request.POST['new_email']
+    new_password = request.POST['new_password']
+    new_password_2 = request.POST['new_password_2']
+    password = request.POST['password']
+
+    if not verify_password(user['email'], password):
+        return {'error': 'Senha incorreta.'}
+        
+    if new_password and new_password != new_password_2:
+        return {'error': 'As senhas novas não conferem.'}
+    
+    response = update_user(
+        user_id,
+        username=new_username if new_username else None,
+        email=new_email if new_email else None,
+        password=new_password if new_password else None
+    )
+
+
+    return response
 
 def redirecionar_view(request, code):
 

@@ -21,7 +21,8 @@ from core.views import *
 
 urlpatterns = [
     path('', homepage_view, name='homepage'),
-    path("logout/", logout_view, name="logout"),
+    path('logout/', logout_view, name="logout"),
     path('usuarios', usuarios_view, name='usuarios'),
+    path('perfil', perfil_view, name='perfil'),
     path('<str:code>/', redirecionar_view, name='redirecionar'),
 ]

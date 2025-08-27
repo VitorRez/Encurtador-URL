@@ -9,13 +9,14 @@
 <body>
     <header>
         <div>
-            <h2>Encurtador de URL</h2>
+            <h2>🔗 Encurtador de URL</h2>
         </div>
         <div>
             {% if is_authenticated %}
                 <button onclick="filtrarMinhasURLs()">Minhas URLs</button>
                 <button onclick="window.location='/usuarios';">Gerenciar usuários</button>
-                <button onclick="window.location='/logout';">Logoff</button>
+                <button onclick="abrirPerfil()">Alterar dados</button>
+                <button class="logout" onclick="window.location='/logout';">Logoff</button>
             {% else %}
                 <button onclick="abrirLogin()">Login</button>
             {% endif %}
@@ -28,15 +29,60 @@
             <h3>Login</h3>
             <form method="post">
                 {% csrf_token %}
-                <label>Usuário</label>
-                <input type="text" name="username" required>
-                <label>Senha</label>
-                <input type="password" name="password" required>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="text" name="email" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" required>
+                </div>
+
                 <button type="submit">Entrar</button>
             </form>
         </div>
     </div>
 
+    <div id="perfilDashboard" class="dashboard">
+        <div class="dashboard-content">
+            <span class="close" onclick="fecharPerfil()">&times;</span>
+            <h3>Editar dados</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <label>Nome de usuário</label>
+                    <input type="text" name="new_username">
+                </div>
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="text" name="new_email">
+                </div>
+                <div class="input-group">
+                    <label>Nova senha</label>
+                    <input type="password" name="new_password">
+                </div>
+                <div class="input-group">
+                    <label>Confirmar nova senha</label>
+                    <input type="password" name="new_password_2">
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" name="password" required>
+                </div>
+                <button type="submit">Confirmar dados</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="alerts">
+        {% if response.error %}
+        <p class='error'>{{response.error}}</p>
+        {% endif %}
+        {% if response.message %}
+        <p class='message'>{{response.message}}</p>
+        {% endif %}
+    </div>
 
     <main class="content">
         {% if is_authenticated %}
@@ -70,7 +116,11 @@
                 <tbody>
                     {% for url in urls %}
                     <tr class="url-row" data-user="{{ url.username }}">
-                        <td><a href="/{{ url.short_code }}" target="_blank">{{ request.get_host }}/{{ url.short_code }}</a></td>
+                        <td>
+                            <a href="/{{ url.short_code }}" target="_blank" onclick="atualizarDepois()">
+                                {{ request.get_host }}/{{ url.short_code }}
+                            </a>
+                        </td>
                         <td>{{ url.original_url }}</td>
                         <td>{{ url.clicks }}</td>
                         <td>{{ url.username }}</td>
@@ -94,6 +144,14 @@
             document.getElementById("loginDashboard").style.right = "-400px";
         }
 
+        function abrirPerfil() {
+            document.getElementById("perfilDashboard").style.right = "0";
+        }
+
+        function fecharPerfil() {
+            document.getElementById("perfilDashboard").style.right = "-400px";
+        }
+
         function filtrarMinhasURLs() {
             const user = "{{ username }}";
             const rows = document.querySelectorAll(".url-row");
@@ -111,6 +169,24 @@
                 filtroAtivo = false;
             }
         }
+
+        function atualizarDepois() {
+            // espera 500ms para dar tempo do clique registrar no backend
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const alerts = document.querySelectorAll(".error, .message");
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.transition = "opacity 0.6s ease";
+                    alert.style.opacity = "0";
+                    setTimeout(() => alert.remove(), 600);
+                }, 4000);
+            });
+        });
     </script>
 
 

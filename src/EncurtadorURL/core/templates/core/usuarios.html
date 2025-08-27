@@ -9,13 +9,22 @@
 <body>
     <header>
         <div>
-            <h2>Encurtador de URL</h2>
+            <h2>🔗 Encurtador de URL</h2>
         </div>
         <div>
             <button onclick="window.location='/';">Home</button>
-            <button onclick="window.location='/logout';">Logoff</button>
+            <button class="logout" onclick="window.location='/logout';">Logoff</button>
         </div>
     </header>
+
+    <div>
+        {% if response.error %}
+        <p class='error'>{{response.error}}</p>
+        {% endif %}
+        {% if response.message %}
+        <p class='message'>{{response.message}}</p>
+        {% endif %}
+    </div>
 
     <main class="content">
         <div class="form-container">

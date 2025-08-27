@@ -1,33 +1,31 @@
-from .usuario import get_user
+from .usuario import *
 from ..connection import connect_to_db
 from ..utils.create_code import generate_code
 
-def create_short_url(original_url, username, custom_url):
+def create_short_url(original_url, user_id, custom_url):
     conn = connect_to_db()
     cur = conn.cursor()
 
     try:
-        user = get_user(username)
-
         if not custom_url:
             short_code = generate_code()
-            cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{short_code}', '{original_url}', '{user['id']}');")            
+            cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{short_code}', '{original_url}', '{user_id}');")            
 
         else:
-            cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{custom_url}', '{original_url}', '{user['id']}');")
+            cur.execute(f"INSERT INTO SHORT_URL (SHORT_CODE, ORIGINAL_URL, USUARIO_ID) VALUES('{custom_url}', '{original_url}', '{user_id}');")
 
         conn.commit()
 
         cur.close()
         conn.close()
 
-        return {"message": "url encurtado com sucesso!"}
+        return {"message": "URL encurtada com sucesso."}
     
     except Exception as e:
         cur.close()
         conn.close()
 
-        return {"error": str(e)}
+        return {"error": "URL customizada ja foi usada."}
     
     
 def get_short_urls():
@@ -46,7 +44,8 @@ def get_short_urls():
         INNER JOIN
             USUARIO
         ON 
-            SHORT_URL.USUARIO_ID = USUARIO.ID;
+            SHORT_URL.USUARIO_ID = USUARIO.ID
+        ORDER BY SHORT_URL.ID;
     """
     cur.execute(query)
 
