@@ -11,7 +11,6 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.tokens import AccessToken
 from datetime import datetime, timedelta
 import string, random
-from .models import ShortURL
 from .database.repositories.usuario import *
 from .database.repositories.short_url import *
 
@@ -80,12 +79,11 @@ def homepage_view(request):
 
     if user_id:
         user = get_user_by_id(user_id)
-        print(user)
         if user:
             username = user.get('username', '')
 
     urls = get_short_urls()
-    print(urls)
+    
     context = {
         'urls': urls,
         'is_authenticated': bool(token),
@@ -185,7 +183,7 @@ def redirecionar_view(request, code):
 
         return redirect(url['original_url'])
     
-    except ShortURL.DoesNotExist:
+    except Exception as e:
         return render(request, 'core/404.html', status=404)
     
 def logout_view(request):

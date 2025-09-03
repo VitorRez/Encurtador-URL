@@ -1,5 +1,13 @@
+asgiref==3.9.1
 Django==5.1.2
 django-cors-headers==4.6.0
+django-environ==0.12.0
+django-livereload-server==0.5.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
-django-livereload-server==0.5.1
+psycopg2-binary==2.9.10
+pycryptodome==3.23.0
+PyJWT==2.10.1
+sqlparse==0.5.3
+tornado==6.5.2
+typing_extensions==4.15.0
