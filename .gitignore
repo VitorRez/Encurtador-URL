@@ -1,4 +1,3 @@
 venv/
 .vagrant/
 .env
-a.py

@@ -28,8 +28,6 @@ SECRET_KEY = 'django-insecure-=*h=^m#ma(rgsknflp8@rta*l7^t)65kx+8w80i44*t5+wmxy%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -198,3 +196,6 @@ DB_PORT = env.int("DB_PORT")
 DATABASE = env("DATABASE")
 DB_USER = env("DB_USER")
 DB_PASSWORD = env("DB_PASSWORD")
+
+# Hosts
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
