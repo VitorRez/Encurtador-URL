@@ -22,12 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=*h=^m#ma(rgsknflp8@rta*l7^t)65kx+8w80i44*t5+wmxy%'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -172,11 +166,7 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
-
-# Email
-
-BASE_DIR = Path(__file__).resolve().parent.parent
+CORS_ALLOW_CREDENTIALS = True
 
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
@@ -199,3 +189,9 @@ DB_PASSWORD = env("DB_PASSWORD")
 
 # Hosts
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+
+# SECURITY WARNING: keep the key used in production secret!
+SECRET_KEY = env("SECRET_KEY")
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env("DEBUG")
