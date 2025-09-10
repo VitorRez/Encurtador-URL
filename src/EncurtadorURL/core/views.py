@@ -1,8 +1,11 @@
 from django.shortcuts import redirect, render
-from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth.hashers import check_password, make_password
 from django.utils.timezone import now
 from django.core.mail import send_mail
 from django.conf import settings
+from django.db import IntegrityError
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -11,33 +14,19 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from rest_framework_simplejwt.tokens import AccessToken
 from datetime import datetime, timedelta
 import string, random
-from .database.repositories.usuario import *
-from .database.repositories.short_url import *
+from .models import ShortURL
 
 
 # Create your views here.
-
-
-def create_refresh(id):
-    refresh = RefreshToken()
-
-    refresh["user_id"] = id
-    refresh["is_external"] = True
-
-    return refresh
-
 
 def verify_token(request):
     token_str = request.session.get('access')
     if not token_str:
         return None
-    
     try:
-        token = AccessToken(token_str)
-        return token
+        return AccessToken(token_str)
     except TokenError:
         return None
-    
 
 def generate_code(length=6):
 
@@ -45,19 +34,25 @@ def generate_code(length=6):
 
 
 def login_view(request):
-    email = request.POST.get('email')
+    email = request.POST.get('email')   
     password = request.POST.get('password')
 
-    user = verify_password(email, password)
+    try:
+        user = get_user_model().objects.get(email=email)
 
-    if user == None:
-        return {'error': 'Email ou senha inválidos.'}
+    except get_user_model().DoesNotExist:
+        return {'error': 'Email inválido.'}
 
-    refresh = create_refresh(user['id'])
+    user = authenticate(request, username=user.username, password=password)
+
+    if not user:
+        return {'error': 'Usuário ou senha inválidos.'}
+
+    refresh = RefreshToken.for_user(user)
 
     request.session['refresh'] = str(refresh)
     request.session['access'] = str(refresh.access_token)
-    request.session['user_id'] = user['id']
+    request.session['user_id'] = user.id
 
     return {'message': 'Login realizado com sucesso.'}
 
@@ -68,52 +63,52 @@ def encurtar_view(request):
     original_url = request.POST.get('original_url')
     custom_url = request.POST.get('custom_url')
 
-    response = create_short_url(original_url, user_id, custom_url)
-    return response
+    User = get_user_model()
+    user = User.objects.get(id=user_id)
+
+    try:
+        short_code = custom_url if custom_url else generate_code()
+
+        short_url = ShortURL.objects.create(
+            short_code=short_code,
+            original_url=original_url,
+            usuario=user
+        )
+
+        return {"message": "URL encurtada com sucesso.", "short_code": short_url.short_code}
+
+    except Exception as e:
+        return {"error": "URL customizada já foi usada ou ocorreu um erro."}
 
 
 def homepage_view(request):
     user_id = request.session.get('user_id')
     token = verify_token(request)
-    username = ''
 
-    if user_id:
-        user = get_user_by_id(user_id)
-        if user:
-            username = user.get('username', '')
-
-    urls = get_short_urls()
+    urls = ShortURL.objects.all().order_by('-created_at')
     
     context = {
         'urls': urls,
         'is_authenticated': bool(token),
-        'username': username
+        'user_id': user_id
     }
 
     if request.method == 'POST':
         if request.POST.get('email'):
             response = login_view(request)
-            token = verify_token(request)
-            context.update({
-                'response': response,
-                'is_authenticated': bool(token)
-            })
 
         elif request.POST.get('original_url'):
             response = encurtar_view(request)
-            urls = get_short_urls()
-            context.update({
-                'urls': urls,
-                'response': response
-            })
 
         elif request.POST.get('new_username'):
             response = perfil_view(request)
-            urls = get_short_urls()
-            context.update({
-                'urls': urls,
-                'response': response
-            })
+
+        if 'message' in response:
+            messages.success(request, response['message'])
+        if 'error' in response:
+            messages.error(request, response['error'])
+
+        return redirect('homepage')
 
     return render(request, 'core/home.html', context)
 
@@ -123,15 +118,23 @@ def usuarios_view(request):
 
     if not token:
         return redirect('homepage')
-    
-    response = {}
+
+    User = get_user_model()
 
     if request.method == 'POST':
         new_username = request.POST['new_username']
         new_email = request.POST['new_email']
         new_password = generate_code(8)
 
-        response = create_user(new_username, new_email, new_password)
+        try:
+            user = User.objects.create_user(
+                username=new_username,
+                email=new_email,
+                password=new_password
+            )
+
+        except IntegrityError:
+            return {'error': 'Erro ao criar usuário: Já existe um usuário com essas credenciais.'}
 
         assunto = "Sua conta foi criada"
         mensagem = f"Olá {new_username},\n\nSua conta foi criada com sucesso.\nSua senha é: {new_password}\n\nPor segurança, altere-a após o login."
@@ -144,44 +147,40 @@ def usuarios_view(request):
             fail_silently=False,
         )
 
+    users = User.objects.all().order_by('-id')
 
-    users = get_users()
-
-    return render(request, 'core/usuarios.html', {'users': users, 'response': response})
+    return render(request, 'core/usuarios.html', {'users': users})
 
 def perfil_view(request):
     user_id = request.session.get('user_id')
-    user = get_user_by_id(user_id)
-    
-    new_username = request.POST['new_username']
-    new_email = request.POST['new_email']
-    new_password = request.POST['new_password']
-    new_password_2 = request.POST['new_password_2']
-    password = request.POST['password']
+    user = user = get_user_model().objects.get(id=user_id)
 
-    if not verify_password(user['email'], password):
+    if not check_password(request.POST['password'], user.password):
         return {'error': 'Senha incorreta.'}
         
-    if new_password and new_password != new_password_2:
+    if request.POST['new_password'] and request.POST['new_password'] != request.POST['new_password_2']:
         return {'error': 'As senhas novas não conferem.'}
     
-    response = update_user(
-        user_id,
-        username=new_username if new_username else None,
-        email=new_email if new_email else None,
-        password=new_password if new_password else None
-    )
+    if request.POST.get('new_username'):
+        user.username = request.POST['new_username']
+    if request.POST.get('new_email'):
+        user.email = request.POST['new_email']
+    if request.POST.get('new_password'):
+        user.password = make_password(request.POST['new_password'])
 
+    user.save()
 
-    return response
+    return {'message': 'Usuário atualizado com sucesso'}
+
 
 def redirecionar_view(request, code):
 
     try:
-        url = get_short_url_by_code(code)
-        update_click(code)
+        url = ShortURL.objects.get(short_code=code)
+        url.clicks += 1
+        url.save()
 
-        return redirect(url['original_url'])
+        return redirect(url.original_url)
     
     except Exception as e:
         return render(request, 'core/404.html', status=404)

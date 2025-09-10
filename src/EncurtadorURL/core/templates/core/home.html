@@ -76,11 +76,16 @@
     </div>
 
     <div class="alerts">
-        {% if response.error %}
-        <p class='error'>{{response.error}}</p>
-        {% endif %}
-        {% if response.message %}
-        <p class='message'>{{response.message}}</p>
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'error' in message.tags %}
+                    <p class="error">{{ message }}</p>
+                {% elif 'success' in message.tags %}
+                    <p class="message">{{ message }}</p>
+                {% else %}
+                    <p>{{ message }}</p>
+                {% endif %}
+            {% endfor %}
         {% endif %}
     </div>
 
@@ -115,7 +120,7 @@
                 </thead>
                 <tbody>
                     {% for url in urls %}
-                    <tr class="url-row" data-user="{{ url.username }}">
+                    <tr class="url-row" data-user="{{ url.usuario.id }}">
                         <td>
                             <a href="/{{ url.short_code }}" target="_blank" onclick="atualizarDepois()">
                                 {{ request.get_host }}/{{ url.short_code }}
@@ -123,8 +128,8 @@
                         </td>
                         <td>{{ url.original_url }}</td>
                         <td>{{ url.clicks }}</td>
-                        <td>{{ url.username }}</td>
-                        <td>{{ url.email }}</td>
+                        <td>{{ url.usuario.username }}</td>
+                        <td>{{ url.usuario.email }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -153,7 +158,7 @@
         }
 
         function filtrarMinhasURLs() {
-            const user = "{{ username }}";
+            const user = "{{ user_id }}";
             const rows = document.querySelectorAll(".url-row");
             const botao = document.querySelector('button[onclick="filtrarMinhasURLs()"]');
 
@@ -171,7 +176,6 @@
         }
 
         function atualizarDepois() {
-            // espera 500ms para dar tempo do clique registrar no backend
             setTimeout(() => {
                 window.location.reload();
             }, 500);

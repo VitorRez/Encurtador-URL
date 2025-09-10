@@ -109,17 +109,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'EncurtadorURL.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -180,13 +169,6 @@ EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# Variáveis de banco de dados
-DB_HOST = env("DB_HOST")
-DB_PORT = env.int("DB_PORT")
-DATABASE = env("DATABASE")
-DB_USER = env("DB_USER")
-DB_PASSWORD = env("DB_PASSWORD")
-
 # Hosts
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
@@ -195,3 +177,22 @@ SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env("DATABASE"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_HOST"),
+        'PORT': env.int("DB_PORT"), 
+    }
+}
+
+# Informações do usuário base
+USERNAME = env("USERNAME")
+EMAIL = env("EMAIL")
+PASSWORD = env("PASSWORD")
